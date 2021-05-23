@@ -11,7 +11,28 @@ class AuthError(Exception):
 
 
 def get_token_auth_header():
-    pass
+    if "Authorization" not in request.headers:
+        raise AuthError(
+            {"code": "not_found", "description": "Bearer Token Not Found"}, 401
+        )
+
+    authString = request.headers["Authorization"]
+    parts = authString.split(" ")
+    if parts[0] != "Bearer" or len(parts) != 2:
+        raise AuthError(
+            {"code": "invalid_token", "description": "Invalid Bearer Token"},
+            401,
+        )
+
+    jwtToken = parts[1]
+    components = jwtToken.split(".")
+    if len(components) != 3:
+        raise AuthError(
+            {"code": "invalid_token", "description": "Invalid Bearer Token"},
+            401,
+        )
+
+    return jwtToken
 
 
 def verify_decode_jwt(token):
