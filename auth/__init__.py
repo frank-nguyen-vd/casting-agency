@@ -122,7 +122,25 @@ def verify_decode_jwt(token):
 
 
 def check_permissions(permission, payload):
-    pass
+    if "permissions" not in payload:
+        raise AuthError(
+            {
+                "code": "invalid_token_playload",
+                "description": "Missing permissions",
+            },
+            401,
+        )
+
+    if permission == "":
+        return True
+
+    if permission in payload["permissions"]:
+        return True
+
+    raise AuthError(
+        {"code": "unauthorized", "description": "Permission not granted"},
+        403,
+    )
 
 
 def requires_auth(permission=""):
