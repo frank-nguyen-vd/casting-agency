@@ -1,4 +1,8 @@
+# THIRD-PARTY MODULES
 from flask import Flask
+
+
+# LOCAL MODULES
 from database import setup_db
 
 app = Flask(__name__)
