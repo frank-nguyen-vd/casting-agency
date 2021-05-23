@@ -1,12 +1,13 @@
 # THIRD-PARTY MODULES
 from flask import Flask, jsonify
-
+from dotenv import load_dotenv
 
 # LOCAL MODULES
 from database import setup_db
 from database.movies import Movies
 from database.actors import Actors
 
+load_dotenv()
 app = Flask(__name__)
 setup_db(app)
 
