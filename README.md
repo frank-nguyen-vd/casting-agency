@@ -35,4 +35,3 @@ The Casting Agency models a company that is responsible for creating movies and 
 \
 \
 &nbsp;
-# APPLICATION ARCHITECTURE
