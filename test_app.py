@@ -1,19 +1,29 @@
-import sys
+import os
 import unittest
 import json
-from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 from icecream import ic
-import argparse
+
 
 from app import create_app
 from database import db
 from database.movies import Movies
 from database.actors import Actors
 
-token = "Bearer "
+load_dotenv()
+
 role = ""
 roleList = ["casting_assistant", "casting_director", "executive_producer"]
+if "TEST_ROLE" in os.environ:
+    role = os.environ["TEST_ROLE"]
+
+token = "Bearer "
+if "TEST_TOKEN" in os.environ:
+    token += os.environ["TEST_TOKEN"]
+
 testdb_path = "postgres://postgres:postgres@localhost:5432/testdb"
+if "TEST_DB" in os.environ:
+    testdb_path = os.environ["TEST_DB"]
 
 
 def mock_testdb():
@@ -70,7 +80,7 @@ class MoviesTestCase(unittest.TestCase):
     def test_get_paginated_movies(self):
         res = self.client.get("/movies", headers=self.headers)
         if role in roleList:
-            self.assertEqual(res.status_code, 200)
+            assert res.status_code == 200
 
 
 class ActorsTestCase(unittest.TestCase):
@@ -95,15 +105,15 @@ class ActorsTestCase(unittest.TestCase):
 
         if role in roleList:
             data = json.loads(res.data)
-            self.assertEqual(res.status_code, 200)
-            self.assertEqual(data["success"], True)
+            assert res.status_code == 200
+            assert data["success"] == True
 
-            self.assertEqual(type(data["actors"][0]["name"]) is str, True)
-            self.assertEqual(type(data["actors"][0]["age"]) is int, True)
-            self.assertEqual(type(data["actors"][0]["gender"]) is str, True)
+            assert type(data["actors"][0]["name"]) is str
+            assert type(data["actors"][0]["age"]) is int
+            assert type(data["actors"][0]["gender"]) is str
 
-            self.assertEqual(data["total"] > 0, True)
-            self.assertEqual(data["page"], page)
+            assert data["total"] > 0
+            assert data["page"] == page
 
     def test_401_unauthorized_get_actors(self):
         page = 1
@@ -113,7 +123,7 @@ class ActorsTestCase(unittest.TestCase):
         )
 
         if role not in roleList:
-            self.assertEqual(res.status_code, 401)
+            assert res.status_code == 401
 
     def test_404_request_beyond_valid_page(self):
         page = 100000
@@ -123,21 +133,8 @@ class ActorsTestCase(unittest.TestCase):
         )
 
         if role in roleList:
-            self.assertEqual(res.status_code, 404)
+            assert res.status_code == 404
 
 
 if __name__ == "__main__":
-    for arg in sys.argv:
-        parts = arg.split("=")
-
-        if len(parts) == 2:
-            if parts[0] == "--token":
-                token += parts[1]
-
-            elif parts[0] == "--role" and parts[1] in roleList:
-                role = parts[1]
-
-    for i in range(1, len(sys.argv)):
-        del sys.argv[1]
-
     unittest.main()
