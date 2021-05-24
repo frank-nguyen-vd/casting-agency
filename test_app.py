@@ -83,6 +83,16 @@ class MoviesTestCase(unittest.TestCase):
             self.assertEqual(data["total"] > 0, True)
             self.assertEqual(data["page"], page)
 
+    def test_401_unauthorized_get_actors(self):
+        page = 1
+        size = 10
+        res = self.client.get(
+            "/actors?page={}&size={}".format(page, size), headers=self.headers
+        )
+
+        if role not in roleList:
+            self.assertEqual(res.status_code, 401)
+
 
 
 if __name__ == "__main__":
