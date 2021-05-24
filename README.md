@@ -10,6 +10,14 @@
   - [Deployment](#deployment)
   - [Code Quality & Documentation](#code-quality--documentation)
 - [DEPLOY APPLICATION](#deploy-application)
+  - [Set Up Environment](#set-up-environment)
+  - [Install Dependencies](#install-dependencies)
+  - [Test Application](#test-application)
+  - [Run Application Locally](#run-application-locally)
+  - [Run Application On Cloud (Heroku)](#run-application-on-cloud-heroku)
+    - [Install Heroku CLI](#install-heroku-cli)
+    - [Set Up Heroku App](#set-up-heroku-app)
+    - [Git Push](#git-push)
 - [AUTH0 AUTHENTICATION](#auth0-authentication)
   \
    \
@@ -141,15 +149,43 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 # DEPLOY APPLICATION
 
-1. Set Up Environment
+### Set Up Environment
 
-2. Install Dependencies
+### Install Dependencies
 
-3. Test Application
+### Test Application
 
-4. Run Application Locally
+To ensure the application performs as expected for all users, we must ensure the application works for all supported roles. There are four roles in our application: `Casting Assistant`, `Casting Director`, `Executive Producder` and `Public`. `Public` account means there is no access token provided for a request and the application must reject all requests from `Public` account.
 
-5. Run Application On Cloud (Heroku)
+Step 1: Follow [these instructions](#auth0-authentication) to retrieve access token
+Step 2: From the project folder, run
+
+```bash
+python3 test_app.py --role=<user_role> --token=<token>
+```
+
+Where
+
+- `<user_role>` can be `casting_assistant`, `casting_director`, `executive_producer` or empty string. Empty string is treated as `Public` account
+- `<token>` is the token retrieved during `Step 1`. Empty string is treated as `Public` account
+
+### Run Application Locally
+
+From the project folder, run
+
+```bash
+bash run.sh
+```
+
+> :exclamation: This script will export all necessary environment variables used only for the evaluation of the application. For production, we will save all these environment variables in `.env` or in Heroku environment variables
+
+### Run Application On Cloud (Heroku)
+
+#### Install Heroku CLI
+
+#### Set Up Heroku App
+
+#### Git Push
 
 # AUTH0 AUTHENTICATION
 
