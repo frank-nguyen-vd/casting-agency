@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, redirect
+from flask import Flask, jsonify, redirect, request
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flasgger import Swagger
+from icecream import ic
 
 
 from database import setup_db
@@ -14,6 +15,8 @@ class ResourceError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
+
+
 def paginate(itemsList=[], page=1, size=10):
     startIndex = (page - 1) * size
     endIndex = startIndex + size
@@ -134,14 +137,30 @@ def create_app(database_path=None):
                         page:
                             type: number
         """
-        obj_list = Actors.query.all()
-        str_list = [str(obj) for obj in obj_list]
-        return jsonify({"success": True, "actors": str_list, "page": 1, "total": 10})
+        page = request.args.get("page", 1, type=int)
+        size = request.args.get("size", 10, type=int)
+        itemsList = Actors.query.order_by(Actors.id).all()
+        selectedItems = paginate(itemsList, page, size)
+        return jsonify(
+            {
+                "success": True,
+                "actors": selectedItems,
+                "page": page,
+                "total": len(itemsList),
+            }
+        )
 
     @app.errorhandler(AuthError)
     def handle_auth_error(error):
         return (
-            jsonify({"success": False, "error": error.description}),
+            jsonify({"success": False, "error": error.error}),
+            error.status_code,
+        )
+
+    @app.errorhandler(ResourceError)
+    def handle_resource_error(error):
+        return (
+            jsonify({"success": False, "error": error.error}),
             error.status_code,
         )
 
