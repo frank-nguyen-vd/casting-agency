@@ -100,7 +100,11 @@ class ActorsTestCase(unittest.TestCase):
             data = json.loads(res.data)
             self.assertEqual(res.status_code, 200)
             self.assertEqual(data["success"], True)
-            self.assertEqual(len(data["actors"]) > 0, True)
+
+            self.assertEqual(type(data["actors"][0]["name"]) is str, True)
+            self.assertEqual(type(data["actors"][0]["age"]) is int, True)
+            self.assertEqual(type(data["actors"][0]["gender"]) is str, True)
+
             self.assertEqual(data["total"] > 0, True)
             self.assertEqual(data["page"], page)
 
