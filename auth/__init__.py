@@ -11,8 +11,8 @@ load_dotenv()
 
 
 class AuthError(Exception):
-    def __init__(self, error, status_code):
-        self.error = error
+    def __init__(self, description, status_code):
+        self.description = description
         self.status_code = status_code
 
 
