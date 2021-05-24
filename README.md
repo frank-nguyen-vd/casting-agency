@@ -15,7 +15,7 @@
   - [Test Application](#test-application)
   - [Run Application Locally](#run-application-locally)
   - [Run Application On Cloud (Heroku)](#run-application-on-cloud-heroku)
-- [AUTH0 AUTHENTICATION](#auth0-authentication)
+- [AUTH0 AUTHENTICATION AND RBAC](#auth0-authentication-and-rbac)
   <br />
 
 # PROJECT SPECIFICATION
@@ -88,7 +88,7 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 3.  Enable RBAC
 
-    - [ ] Project includes a custom @requires-auth decorator that
+    - [x] Project includes a custom @requires-auth decorator that
       - Get the authorization header from the request
       - Decode and verify JWT using the Auth0 secret
       - Take an argument to describe the action, i.e. `@require_auth('create:drink')`
@@ -97,7 +97,7 @@ The Casting Agency models a company that is responsible for creating movies and 
         - The claims are invalid
         - The token is invalid
         - The JWT does not contain the proper action
-    - [ ] Project includes at leat two different roles that have distinct permissions for actions. These roles and permissions are clearly defined int the project README
+    - [x] Project includes at leat two different roles that have distinct permissions for actions. These roles and permissions are clearly defined int the project README
 
 4.  Demonstrate validity of API behavior
 
@@ -150,17 +150,30 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 To ensure the application performs as expected for all users, we must ensure the application works for all supported roles. There are four roles in our application: `Casting Assistant`, `Casting Director`, `Executive Producder` and `Public`. `Public` account means there is no access token provided for a request and the application must reject all requests from `Public` account.
 
-Step 1: Follow [these instructions](#auth0-authentication) to retrieve access token
-Step 2: From the project folder, run
+- Step 1: Follow [these instructions](#auth0-authentication) to retrieve access token
+- Step 2: Set environment variable `TEST_TOKEN` to the retrieved token value  
+  For example,
+  ```bash
+  export TEST_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im5oeWxCOTlDSndqcGh6c294ZEFNSSJ9.eyJpc3MiOiJodHRwczovL2ZyYW5rbmd1eWVudmQuYXUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYwYWE0MjA2YWU1NGIzMDA2OThmZTM5NiIsImF1ZCI6ImF1dGgiLCJpYXQiOjE2MjE4NjUwMTQsImV4cCI6MTYyMTg3MjIxNCwiYXpwIjoib29uUjFWeHg2YlBqSmFrTE93V3FIaXhRSjVjaXNTakciLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImNyZWF0ZTphY3RvcnMiLCJjcmVhdGU6bW92aWVzIiwiZGVsZXRlOmFjdG9ycyIsImRlbGV0ZTptb3ZpZXMiLCJyZWFkOmFjdG9ycyIsInJlYWQ6bW92aWVzIiwidXBkYXRlOmFjdG9ycyIsInVwZGF0ZTptb3ZpZXMiXX0.vJB4jyjr6kxkaDkhHWL5jTv-O6-Nbw35hBjE7H25jkQxJwzeYl2-vkOS2NKAefVFsaPKWtde7nlDHbF7yMZ3-ZJDcIWAVt9TOEMZZYiUHHPwtYSleWGmvwufmCNlDYxpFXQiutc0207a3X2lB-5VPyKzMwV0mTt5JSHWTFCZ3s0jVFBzL2M5tOcOimX2m5mwoI5TL3P9aNuSVk0Q4OG-5b4CHoOSQy0n4xcaHLH4oKaTKiwjfseaJO8sjdJPWDMdtLNohe9il899L0iGpNWcpOWoMtv6jANtZ7klIBvsdTtDYMMRRVjogdJl1TpEPPzch2PaI5sAWhBRFOc-GT-HeQ"
+  ```
+- Step 3: Set environment variable `TEST_ROLE` to one of following role
 
-```bash
-python3 test_app.py --role=<user_role> --token=<token>
-```
+  - `""` represents `Public` account
+  - `casting_assistant` represents `Casting Assistant` account
+  - `casting_director` represents `Casting Director` account
+  - `executive_producer` represents `Executive Producer` account  
+    For example,
+    ```bash
+    export TEST_ROLE="executive_producer"
+    ```
 
-Where
+- Step 4: From the project folder, run
 
-- `<user_role>` can be `casting_assistant`, `casting_director`, `executive_producer` or empty string. Empty string is treated as `Public` account
-- `<token>` is the token retrieved during `Step 1`. Empty string is treated as `Public` account
+  ```bash
+  pytest
+  ```
+
+  <br/>
 
 ### Run Application Locally
 
@@ -180,7 +193,7 @@ bash run.sh
 
 3. Git Push
 
-# AUTH0 AUTHENTICATION
+# AUTH0 AUTHENTICATION AND RBAC
 
 1. RBAC Accounts
 
