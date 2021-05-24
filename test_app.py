@@ -1,19 +1,29 @@
-import sys
+import os
 import unittest
 import json
-from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 from icecream import ic
-import argparse
+
 
 from app import create_app
 from database import db
 from database.movies import Movies
 from database.actors import Actors
 
-token = "Bearer "
+load_dotenv()
+
 role = ""
 roleList = ["casting_assistant", "casting_director", "executive_producer"]
+if "TEST_ROLE" in os.environ:
+    role = os.environ["TEST_ROLE"]
+
+token = "Bearer "
+if "TEST_TOKEN" in os.environ:
+    token += os.environ["TEST_TOKEN"]
+
 testdb_path = "postgres://postgres:postgres@localhost:5432/testdb"
+if "TEST_DB" in os.environ:
+    testdb_path = os.environ["TEST_DB"]
 
 
 def mock_testdb():
@@ -127,17 +137,4 @@ class ActorsTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    for arg in sys.argv:
-        parts = arg.split("=")
-
-        if len(parts) == 2:
-            if parts[0] == "--token":
-                token += parts[1]
-
-            elif parts[0] == "--role" and parts[1] in roleList:
-                role = parts[1]
-
-    for i in range(1, len(sys.argv)):
-        del sys.argv[1]
-
     unittest.main()
