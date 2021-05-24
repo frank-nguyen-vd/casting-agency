@@ -54,19 +54,35 @@ def mock_testdb():
 
 class MoviesTestCase(unittest.TestCase):
     def setUp(self):
-        database_path = "postgres://postgres:postgres@localhost:5432/testdb"
-        self.app = create_app(database_path)
+        self.app = create_app(testdb_path)
         self.client = self.app.test_client()
         self.headers = {
             "Content-Type": "application/json",
             "Authorization": token,
         }
+        mock_testdb()
 
     def tearDown(self):
         pass
 
     def test_get_paginated_movies(self):
         res = self.client.get("/movies", headers=self.headers)
+        if role in roleList:
+            self.assertEqual(res.status_code, 200)
+
+
+class ActorsTestCase(unittest.TestCase):
+    def setUp(self):
+        self.app = create_app(testdb_path)
+        self.client = self.app.test_client()
+        self.headers = {
+            "Content-Type": "application/json",
+            "Authorization": token,
+        }
+        mock_testdb()
+
+    def tearDown(self):
+        pass
 
     def test_200_get_paginated_actors(self):
         page = 1
@@ -77,7 +93,7 @@ class MoviesTestCase(unittest.TestCase):
 
         if role in roleList:
             data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 200)
             self.assertEqual(data["success"], True)
             self.assertEqual(len(data["actors"]) > 0, True)
             self.assertEqual(data["total"] > 0, True)
