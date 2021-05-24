@@ -6,6 +6,7 @@ from icecream import ic
 import argparse
 
 from app import create_app
+from database import db
 from database.movies import Movies
 from database.actors import Actors
 
@@ -16,6 +17,7 @@ testdb_path = "postgres://postgres:postgres@localhost:5432/testdb"
 
 
 def mock_testdb():
+    db.create_all()
     sample_movies = [
         {"title": "Dragon Age", "release_date": "01/01/2008"},
         {"title": "Jurassic Park", "release_date": "01/01/2002"},
@@ -52,11 +54,6 @@ def mock_testdb():
         Actors(actor["name"], actor["age"], actor["gender"]).insert()
 
 
-def empty_testdb():
-    Actors.query.delete()
-    Movies.query.delete()
-
-
 class MoviesTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app(testdb_path)
@@ -68,7 +65,7 @@ class MoviesTestCase(unittest.TestCase):
         mock_testdb()
 
     def tearDown(self):
-        empty_testdb()
+        db.drop_all()
 
     def test_get_paginated_movies(self):
         res = self.client.get("/movies", headers=self.headers)
@@ -87,7 +84,7 @@ class ActorsTestCase(unittest.TestCase):
         mock_testdb()
 
     def tearDown(self):
-        empty_testdb()
+        db.drop_all()
 
     def test_200_get_paginated_actors(self):
         page = 1
