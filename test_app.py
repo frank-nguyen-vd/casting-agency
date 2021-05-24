@@ -52,6 +52,11 @@ def mock_testdb():
         Actors(actor["name"], actor["age"], actor["gender"]).insert()
 
 
+def empty_testdb():
+    Actors.query.delete()
+    Movies.query.delete()
+
+
 class MoviesTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app(testdb_path)
@@ -63,7 +68,7 @@ class MoviesTestCase(unittest.TestCase):
         mock_testdb()
 
     def tearDown(self):
-        pass
+        empty_testdb()
 
     def test_get_paginated_movies(self):
         res = self.client.get("/movies", headers=self.headers)
@@ -82,7 +87,7 @@ class ActorsTestCase(unittest.TestCase):
         mock_testdb()
 
     def tearDown(self):
-        pass
+        empty_testdb()
 
     def test_200_get_paginated_actors(self):
         page = 1
