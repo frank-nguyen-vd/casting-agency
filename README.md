@@ -1,6 +1,19 @@
-# PROJECT: CASTING AGENCY
-
-&nbsp;
+- [PROJECT SPECIFICATION](#project-specification)
+  - [Description](#description)
+  - [Models](#models)
+  - [Endpoints](#endpoints)
+  - [Roles](#roles)
+  - [Tests](#tests)
+- [ACCEPTANCE CRITERIA](#acceptance-criteria)
+  - [Data Modeling](#data-modeling)
+  - [API Architecture and Testing](#api-architecture-and-testing)
+  - [Deployment](#deployment)
+  - [Code Quality & Documentation](#code-quality--documentation)
+- [DEPLOY APPLICATION](#deploy-application)
+- [AUTH0 AUTHENTICATION](#auth0-authentication)
+  \
+   \
+   &nbsp;
 
 # PROJECT SPECIFICATION
 
@@ -41,17 +54,108 @@ The Casting Agency models a company that is responsible for creating movies and 
   \
   &nbsp;
 
-# DEPLOY HEROKU APPLICATION
+# ACCEPTANCE CRITERIA
 
-If you want to deploy code to Heroku from a non-main branch of your local repository (for example, testbranch), use the following syntax to ensure it is pushed to the remote’s main branch:
+### Data Modeling
 
-```bash
-git push heroku testbranch:main
-```
+1. Architect relational database models in Python
+
+   - [ ] Use of correct data types for fields
+   - [ ] Use of primary and optional foreign key ids
+
+2. Utilize SQLAlchemy to conduct database queries
+
+   - [ ] Does not use raw SQL or only where there are not SQLAlchemy equivalent expressions
+   - [ ] Correctly formats SQLAlchemy to define models
+   - [ ] Creates methods to serialize model data and helper methods to simplify API behavior such as insert, update and delete.
+
+### API Architecture and Testing
+
+1. Follow RESTful principles of API development
+
+   - [ ] RESTful principles are followed throughout the project, including appropriate naming of endpoints, use of HTTP methods GET, POST, PATCH and DELETE
+   - [ ] Routes perform CRUD operations
+
+2. Structure endpoints to respond to four HTTP methods, including error handling
+
+   - [ ] Specifies endpoints and behaviour for at least:
+     - Two GET requests
+     - One POST request
+     - One PATCH request
+     - One DELETE request
+   - [ ] Utilize the `@app.errorhandler` decorator to format error responses as JSON objects for at least four different status codes
+
+3. Enable RBAC
+
+   - [ ] Project includes a custom @requires-auth decorator that
+     - Get the authorization header from the request
+     - Decode and verify JWT using the Auth0 secret
+     - Take an argument to describe the action, i.e. `@require_auth('create:drink')`
+     - Raise an error if
+       - The token is expired
+       - The claims are invalid
+       - The token is invalid
+       - The JWT does not contain the proper action
+   - [ ] Project includes at leat two different roles that have distinct permissions for actions. These roles and permissions are clearly defined int the project README
+
+4. Demonstrate validity of API behavior
+   - [ ] Includes at least one test for expected success and error behaviour for each endpoint using the unittest library
+   - [ ] Includes tests demonstrating RBAC, at least two per role
+         \
+          \
+          &nbsp;
+
+### Deployment
+
+1. Application is hosted live at student provided URL
+
+   - [ ] API is hosted live via Heroku
+   - [ ] URL is provided in project README
+   - [ ] API can be accessed by URL and requires authentication
+
+2. Includes instructions to set up authentication
+   - [ ] Instructions are provided in README for setting up authentication so reviewers can test endpoints at live application endpoint
+
+### Code Quality & Documentation
+
+1. Write clear, concise and well documented code
+   The code adheres to the PEP 8 style guide and follows common best practices, including:
+   - [ ] Variable and function names are clear.
+   - [ ] Endpoints are logically named.
+   - [ ] Code is commented appropriately.
+   - [ ] Secrets are stored as environment variables.
+2. Project demonstrates reliability and testability
+   - [ ] Application can be run with no errors and responds with the expected results.
+   - [ ] API test suite for endpoints and RBAC behavior runs without errors or failures
+3. Project demonstrates maintainability
+
+   - [ ] Variable names are logical, code is DRY and well-commented where code complexity makes them useful
+
+4. Project includes thorough documentation
+   Project includes an informative README
+
+   - [ ] Motivation for project
+   - [ ] Project dependencies, local development and hosting instructions,
+   - [ ] Detailed instructions for scripts to install any project dependencies, and to run the development server.
+   - [ ] Documentation of API behavior and RBAC controls
+
+# DEPLOY APPLICATION
+
+1. Set Up Environment
+
+2. Install Dependencies
+
+3. Test Application
+
+4. Run Application Locally
+
+5. Run Application On Cloud (Heroku)
 
 # AUTH0 AUTHENTICATION
 
-List of accounts used to test the application
+1. RBAC Accounts
+
+List of accounts registered on Auth0
 
 | Account            | Email                          | Password  |
 | ------------------ | ------------------------------ | --------- |
@@ -59,5 +163,28 @@ List of accounts used to test the application
 | Casting Director   | casting_director@udacity.com   | @Udacity1 |
 | Executive Producer | executive_producer@udacity.com | @Udacity1 |
 
-\
-To retrieve access token, please click [here](https://franknguyenvd.au.auth0.com/authorize?audience=auth&response_type=token&client_id=oonR1Vxx6bPjJakLOwWqHixQJ5cisSjG&redirect_uri=http://127.0.0.1:8000/) and log in with one of the above account
+Where
+
+- Casting Assistant can access:
+  - GET /movies
+  - GET /actors
+- Casting Director can access
+  - POST /actors
+  - GET /actors
+  - PATCH /actors
+  - DELETE /actors
+  - GET /movies
+  - PATCH /movies
+- Executive Producer can access
+  - POST /actors
+  - GET /actors
+  - PATCH /actors
+  - DELETE /actors
+  - POST /movies
+  - GET /movies
+  - PATCH /movies
+  - DELETE /movies
+
+2. Get JWT Token
+
+To retrieve access token, please click [here](https://franknguyenvd.au.auth0.com/authorize?audience=auth&response_type=token&client_id=oonR1Vxx6bPjJakLOwWqHixQJ5cisSjG&redirect_uri=http://127.0.0.1:8000/) and log in with one of the above account credential
