@@ -14,6 +14,21 @@ class ResourceError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
+def paginate(itemsList=[], page=1, size=10):
+    startIndex = (page - 1) * size
+    endIndex = startIndex + size
+    if startIndex >= len(itemsList):
+        raise ResourceError(
+            {
+                "code": "resource_not_found",
+                "description": "The requested page does not contain any record",
+            },
+            404,
+        )
+    selectedItems = [item.format() for item in itemsList[startIndex:endIndex]]
+    return selectedItems
+
+
 def create_app(database_path=None):
     load_dotenv()
     app = Flask(__name__)
