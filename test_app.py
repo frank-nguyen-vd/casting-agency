@@ -80,7 +80,7 @@ class MoviesTestCase(unittest.TestCase):
     def test_get_paginated_movies(self):
         res = self.client.get("/movies", headers=self.headers)
         if role in roleList:
-            self.assertEqual(res.status_code, 200)
+            assert res.status_code == 200
 
 
 class ActorsTestCase(unittest.TestCase):
@@ -105,15 +105,15 @@ class ActorsTestCase(unittest.TestCase):
 
         if role in roleList:
             data = json.loads(res.data)
-            self.assertEqual(res.status_code, 200)
-            self.assertEqual(data["success"], True)
+            assert res.status_code == 200
+            assert data["success"] == True
 
-            self.assertEqual(type(data["actors"][0]["name"]) is str, True)
-            self.assertEqual(type(data["actors"][0]["age"]) is int, True)
-            self.assertEqual(type(data["actors"][0]["gender"]) is str, True)
+            assert type(data["actors"][0]["name"]) is str
+            assert type(data["actors"][0]["age"]) is int
+            assert type(data["actors"][0]["gender"]) is str
 
-            self.assertEqual(data["total"] > 0, True)
-            self.assertEqual(data["page"], page)
+            assert data["total"] > 0
+            assert data["page"] == page
 
     def test_401_unauthorized_get_actors(self):
         page = 1
@@ -123,7 +123,7 @@ class ActorsTestCase(unittest.TestCase):
         )
 
         if role not in roleList:
-            self.assertEqual(res.status_code, 401)
+            assert res.status_code == 401
 
     def test_404_request_beyond_valid_page(self):
         page = 100000
@@ -133,7 +133,7 @@ class ActorsTestCase(unittest.TestCase):
         )
 
         if role in roleList:
-            self.assertEqual(res.status_code, 404)
+            assert res.status_code == 404
 
 
 if __name__ == "__main__":
