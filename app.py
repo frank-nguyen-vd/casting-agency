@@ -7,7 +7,7 @@ from flasgger import Swagger
 from database import setup_db
 from database.movies import Movies
 from database.actors import Actors
-from auth import requires_auth
+from auth import requires_auth, AuthError
 
 
 def create_app(database_path=None):
@@ -35,7 +35,7 @@ def create_app(database_path=None):
                 properties:
                     title:
                         type: string
-                    release_data:
+                    release_date:
                         type: string
         parameters:
             -   in: query
@@ -60,9 +60,9 @@ def create_app(database_path=None):
                             type: array
                             items:
                                 $ref: '#/definitions/Movies'
-                        totalItems:
+                        total:
                             type: number
-                        currentPage:
+                        page:
                             type: number
         """
         obj_list = Movies.query.all()
@@ -70,10 +70,18 @@ def create_app(database_path=None):
         return jsonify({"success": True, "data": str_list})
 
     @app.route("/actors")
+    @requires_auth("read:actors")
     def get_actors():
         obj_list = Actors.query.all()
         str_list = [str(obj) for obj in obj_list]
         return jsonify({"success": True, "data": str_list})
+
+    @app.errorhandler(AuthError)
+    def handle_auth_error(error):
+        return (
+            jsonify({"success": False, "error": error.description}),
+            error.status_code,
+        )
 
     return app
 
