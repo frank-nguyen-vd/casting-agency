@@ -4,6 +4,7 @@ from flask.json import jsonify
 from functools import wraps
 from dotenv import load_dotenv
 from urllib.request import urlopen
+from icecream import ic
 from jose import jwt
 import json
 
@@ -91,6 +92,8 @@ def verify_decode_jwt(token):
             audience=os.environ["AUTH0_IDENTIFIER"],
             issuer="https://{}/".format(os.environ["AUTH0_DOMAIN"]),
         )
+
+        return payload
     except jwt.ExpiredSignatureError:
         raise AuthError({"code": "token_expired", "description": "Token expired."}, 401)
 
@@ -110,8 +113,6 @@ def verify_decode_jwt(token):
             },
             401,
         )
-
-    return payload
 
 
 def check_permissions(permission, payload):

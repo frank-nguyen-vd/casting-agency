@@ -71,10 +71,10 @@ def create_app(database_path=None):
 
     @app.route("/actors")
     @requires_auth("read:actors")
-    def get_actors():
+    def get_actors(payload):
         obj_list = Actors.query.all()
         str_list = [str(obj) for obj in obj_list]
-        return jsonify({"success": True, "data": str_list})
+        return jsonify({"success": True, "actors": str_list, "page": 1, "total": 10})
 
     @app.errorhandler(AuthError)
     def handle_auth_error(error):
