@@ -10,6 +10,10 @@ from database.actors import Actors
 from auth import requires_auth, AuthError
 
 
+class ResourceError(Exception):
+    def __init__(self, error, status_code):
+        self.error = error
+        self.status_code = status_code
 def create_app(database_path=None):
     load_dotenv()
     app = Flask(__name__)
