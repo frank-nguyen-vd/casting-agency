@@ -15,13 +15,8 @@
   - [Test Application](#test-application)
   - [Run Application Locally](#run-application-locally)
   - [Run Application On Cloud (Heroku)](#run-application-on-cloud-heroku)
-    - [Install Heroku CLI](#install-heroku-cli)
-    - [Set Up Heroku App](#set-up-heroku-app)
-    - [Git Push](#git-push)
 - [AUTH0 AUTHENTICATION](#auth0-authentication)
-  \
-   \
-   &nbsp;
+  <br />
 
 # PROJECT SPECIFICATION
 
@@ -58,9 +53,7 @@ The Casting Agency models a company that is responsible for creating movies and 
 - One test for success behavior of each endpoint
 - One test for error behavior of each endpoint
 - At least two tests of RBAC for each role
-  \
-  \
-  &nbsp;
+  <br />
 
 # ACCEPTANCE CRITERIA
 
@@ -79,39 +72,39 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 ### API Architecture and Testing
 
-1. Follow RESTful principles of API development
+1.  Follow RESTful principles of API development
 
-   - [ ] RESTful principles are followed throughout the project, including appropriate naming of endpoints, use of HTTP methods GET, POST, PATCH and DELETE
-   - [ ] Routes perform CRUD operations
+    - [ ] RESTful principles are followed throughout the project, including appropriate naming of endpoints, use of HTTP methods GET, POST, PATCH and DELETE
+    - [ ] Routes perform CRUD operations
 
-2. Structure endpoints to respond to four HTTP methods, including error handling
+2.  Structure endpoints to respond to four HTTP methods, including error handling
 
-   - [ ] Specifies endpoints and behaviour for at least:
-     - Two GET requests
-     - One POST request
-     - One PATCH request
-     - One DELETE request
-   - [ ] Utilize the `@app.errorhandler` decorator to format error responses as JSON objects for at least four different status codes
+    - [ ] Specifies endpoints and behaviour for at least:
+      - Two GET requests
+      - One POST request
+      - One PATCH request
+      - One DELETE request
+    - [ ] Utilize the `@app.errorhandler` decorator to format error responses as JSON objects for at least four different status codes
 
-3. Enable RBAC
+3.  Enable RBAC
 
-   - [ ] Project includes a custom @requires-auth decorator that
-     - Get the authorization header from the request
-     - Decode and verify JWT using the Auth0 secret
-     - Take an argument to describe the action, i.e. `@require_auth('create:drink')`
-     - Raise an error if
-       - The token is expired
-       - The claims are invalid
-       - The token is invalid
-       - The JWT does not contain the proper action
-   - [ ] Project includes at leat two different roles that have distinct permissions for actions. These roles and permissions are clearly defined int the project README
+    - [ ] Project includes a custom @requires-auth decorator that
+      - Get the authorization header from the request
+      - Decode and verify JWT using the Auth0 secret
+      - Take an argument to describe the action, i.e. `@require_auth('create:drink')`
+      - Raise an error if
+        - The token is expired
+        - The claims are invalid
+        - The token is invalid
+        - The JWT does not contain the proper action
+    - [ ] Project includes at leat two different roles that have distinct permissions for actions. These roles and permissions are clearly defined int the project README
 
-4. Demonstrate validity of API behavior
-   - [ ] Includes at least one test for expected success and error behaviour for each endpoint using the unittest library
-   - [ ] Includes tests demonstrating RBAC, at least two per role
-         \
-          \
-          &nbsp;
+4.  Demonstrate validity of API behavior
+
+    - [ ] Includes at least one test for expected success and error behaviour for each endpoint using the unittest library
+    - [ ] Includes tests demonstrating RBAC, at least two per role
+
+ <br/>
 
 ### Deployment
 
@@ -181,11 +174,11 @@ bash run.sh
 
 ### Run Application On Cloud (Heroku)
 
-#### Install Heroku CLI
+1. Install Heroku CLI
 
-#### Set Up Heroku App
+2. Set Up Heroku App
 
-#### Git Push
+3. Git Push
 
 # AUTH0 AUTHENTICATION
 
