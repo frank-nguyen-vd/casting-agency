@@ -49,8 +49,17 @@ def verify_decode_jwt(token):
     )
     jwks = json.loads(jsonurl.read())
 
-    # Read token header
-    unverified_header = jwt.get_unverified_header(token)
+    try:
+        # Read token header
+        unverified_header = jwt.get_unverified_header(token)
+    except:
+        raise AuthError(
+            {
+                "code": "invalid_header",
+                "description": "Unable to parse authentication token",
+            },
+            401,
+        )
 
     # Ensure the unique identifier for the key existed
     if "kid" not in unverified_header:
