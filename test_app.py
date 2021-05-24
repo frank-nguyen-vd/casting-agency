@@ -67,7 +67,22 @@ class MoviesTestCase(unittest.TestCase):
 
     def test_get_paginated_movies(self):
         res = self.client.get("/movies", headers=self.headers)
+
+    def test_200_get_paginated_actors(self):
+        page = 1
+        size = 10
+        res = self.client.get(
+            "/actors?page={}&size={}".format(page, size), headers=self.headers
+        )
+
+        if role in roleList:
+            data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
+            self.assertEqual(data["success"], True)
+            self.assertEqual(len(data["actors"]) > 0, True)
+            self.assertEqual(data["total"] > 0, True)
+            self.assertEqual(data["page"], page)
+
 
 
 if __name__ == "__main__":
