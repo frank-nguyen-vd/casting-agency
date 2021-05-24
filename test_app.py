@@ -93,6 +93,15 @@ class MoviesTestCase(unittest.TestCase):
         if role not in roleList:
             self.assertEqual(res.status_code, 401)
 
+    def test_404_request_beyond_valid_page(self):
+        page = 100000
+        size = 100000
+        res = self.client.get(
+            "/actors?page={}&size={}".format(page, size), headers=self.headers
+        )
+
+        if role in roleList:
+            self.assertEqual(res.status_code, 404)
 
 
 if __name__ == "__main__":
