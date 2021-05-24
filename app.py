@@ -72,6 +72,49 @@ def create_app(database_path=None):
     @app.route("/actors")
     @requires_auth("read:actors")
     def get_actors(payload):
+        """Get a paginated list of actors
+        ---
+        tags:
+            - Actors
+
+        definitions:
+            Actors:
+                type: object
+                properties:
+                    name:
+                        type: string
+                    age:
+                        type: integer
+                    gender:
+                        type: string
+        parameters:
+            -   in: query
+                name: page
+                type: integer
+                default: 1
+                description: the page number of the paginated result
+            -   in: query
+                name: size
+                type: integer
+                default: 10
+                description: the number of items per page
+        responses:
+            200:
+                description: A list of actors
+                schema:
+                    type: object
+                    properties:
+                        success:
+                            type: boolean
+                        actors:
+                            type: array
+                            items:
+                                $ref: '#/definitions/Actors'
+                        total:
+                            type: number
+                        page:
+                            type: number
+        """
         obj_list = Actors.query.all()
         str_list = [str(obj) for obj in obj_list]
         return jsonify({"success": True, "actors": str_list, "page": 1, "total": 10})
