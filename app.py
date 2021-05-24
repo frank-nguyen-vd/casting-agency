@@ -1,13 +1,35 @@
-from flask import Flask, jsonify, redirect
+from flask import Flask, jsonify, redirect, request
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flasgger import Swagger
+from icecream import ic
 
 
 from database import setup_db
 from database.movies import Movies
 from database.actors import Actors
-from auth import requires_auth
+from auth import requires_auth, AuthError
+
+
+class ResourceError(Exception):
+    def __init__(self, error, status_code):
+        self.error = error
+        self.status_code = status_code
+
+
+def paginate(itemsList=[], page=1, size=10):
+    startIndex = (page - 1) * size
+    endIndex = startIndex + size
+    if startIndex >= len(itemsList):
+        raise ResourceError(
+            {
+                "code": "resource_not_found",
+                "description": "The requested page does not contain any record",
+            },
+            404,
+        )
+    selectedItems = [item.format() for item in itemsList[startIndex:endIndex]]
+    return selectedItems
 
 
 def create_app(database_path=None):
@@ -35,7 +57,7 @@ def create_app(database_path=None):
                 properties:
                     title:
                         type: string
-                    release_data:
+                    release_date:
                         type: string
         parameters:
             -   in: query
@@ -60,9 +82,9 @@ def create_app(database_path=None):
                             type: array
                             items:
                                 $ref: '#/definitions/Movies'
-                        totalItems:
+                        total:
                             type: number
-                        currentPage:
+                        page:
                             type: number
         """
         obj_list = Movies.query.all()
@@ -70,10 +92,77 @@ def create_app(database_path=None):
         return jsonify({"success": True, "data": str_list})
 
     @app.route("/actors")
-    def get_actors():
-        obj_list = Actors.query.all()
-        str_list = [str(obj) for obj in obj_list]
-        return jsonify({"success": True, "data": str_list})
+    @requires_auth("read:actors")
+    def get_actors(payload):
+        """Get a paginated list of actors
+        ---
+        tags:
+            - Actors
+
+        definitions:
+            Actors:
+                type: object
+                properties:
+                    name:
+                        type: string
+                    age:
+                        type: integer
+                    gender:
+                        type: string
+        parameters:
+            -   in: query
+                name: page
+                type: integer
+                default: 1
+                description: the page number of the paginated result
+            -   in: query
+                name: size
+                type: integer
+                default: 10
+                description: the number of items per page
+        responses:
+            200:
+                description: A list of actors
+                schema:
+                    type: object
+                    properties:
+                        success:
+                            type: boolean
+                        actors:
+                            type: array
+                            items:
+                                $ref: '#/definitions/Actors'
+                        total:
+                            type: number
+                        page:
+                            type: number
+        """
+        page = request.args.get("page", 1, type=int)
+        size = request.args.get("size", 10, type=int)
+        itemsList = Actors.query.order_by(Actors.id).all()
+        selectedItems = paginate(itemsList, page, size)
+        return jsonify(
+            {
+                "success": True,
+                "actors": selectedItems,
+                "page": page,
+                "total": len(itemsList),
+            }
+        )
+
+    @app.errorhandler(AuthError)
+    def handle_auth_error(error):
+        return (
+            jsonify({"success": False, "error": error.error}),
+            error.status_code,
+        )
+
+    @app.errorhandler(ResourceError)
+    def handle_resource_error(error):
+        return (
+            jsonify({"success": False, "error": error.error}),
+            error.status_code,
+        )
 
     return app
 
