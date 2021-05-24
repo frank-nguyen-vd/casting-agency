@@ -9,10 +9,10 @@ from database.actors import Actors
 from auth import requires_auth
 
 
-def create_app():
+def create_app(database_path=None):
     load_dotenv()
     app = Flask(__name__)
-    setup_db(app)
+    setup_db(app, database_path)
     CORS(app)
 
     @app.route("/")
