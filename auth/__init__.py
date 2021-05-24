@@ -4,7 +4,7 @@ from flask.json import jsonify
 from functools import wraps
 from dotenv import load_dotenv
 from urllib.request import urlopen
-import jwt
+from jose import jwt
 import json
 
 load_dotenv()
@@ -42,31 +42,26 @@ def get_token_auth_header():
 
 
 def verify_decode_jwt(token):
-
-    # GET THE PUBLIC KEY FROM AUTH0
+    # Get JSON web key set (jwks) from Auth0
     jsonurl = urlopen(
         "https://{}/.well-known/jwks.json".format(os.environ["AUTH0_DOMAIN"])
     )
     jwks = json.loads(jsonurl.read())
 
-    # GET THE DATA IN THE HEADER
+    # Read token header
     unverified_header = jwt.get_unverified_header(token)
 
-    if (
-        "kid" not in unverified_header
-        or "typ" not in unverified_header
-        or "alg" not in unverified_header
-        or unverified_header["alg"] != os.environ["AUTH0_ALGORITHM"]
-        or unverified_header["typ"] != "JWT"
-    ):
+    # Ensure the unique identifier for the key existed
+    if "kid" not in unverified_header:
         raise AuthError(
             {
-                "code": "invalid_token_header",
+                "code": "invalid_header",
                 "description": "Unable to parse authentication token",
             },
             401,
         )
 
+    # Find the correct key set
     rsa_key = {}
     for key in jwks["keys"]:
         if key["kid"] == unverified_header["kid"]:
@@ -82,24 +77,20 @@ def verify_decode_jwt(token):
     if rsa_key == {}:
         raise AuthError(
             {
-                "code": "invalid_token_header",
+                "code": "invalid_header",
                 "description": "Unable to find the appropriate key.",
             },
             401,
         )
 
     try:
-
         payload = jwt.decode(
             token,
-            rsa_key,
+            key=rsa_key,
             algorithms=[os.environ["AUTH0_ALGORITHM"]],
             audience=os.environ["AUTH0_IDENTIFIER"],
             issuer="https://{}/".format(os.environ["AUTH0_DOMAIN"]),
         )
-
-        return payload
-
     except jwt.ExpiredSignatureError:
         raise AuthError({"code": "token_expired", "description": "Token expired."}, 401)
 
@@ -119,6 +110,8 @@ def verify_decode_jwt(token):
             },
             401,
         )
+
+    return payload
 
 
 def check_permissions(permission, payload):
