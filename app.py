@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, redirect, request
+from flask import Flask, jsonify, redirect, request, abort
 from dotenv import load_dotenv
 from flask_cors import CORS
 from flasgger import Swagger, swag_from
@@ -12,6 +12,12 @@ from auth import requires_auth, AuthError
 
 
 class ResourceError(Exception):
+    def __init__(self, error, status_code):
+        self.error = error
+        self.status_code = status_code
+
+
+class RequestError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
@@ -81,7 +87,35 @@ def create_app(database_path=None):
     @requires_auth("create:actors")
     @swag_from("api_doc/create_actors.yml")
     def create_actors(payload):
-        pass
+        reqBody = request.get_json()
+        if reqBody is None:
+            raise RequestError(
+                {"code": "empty_content", "description": "No actor details provided"},
+                400,
+            )
+
+        name = reqBody.get("name")
+        age = reqBody.get("age")
+        gender = reqBody.get("gender")
+
+        if name is None or age is None or gender is None:
+            raise RequestError(
+                {"code": "missing_field", "description": "Missing actor details"},
+                400,
+            )
+
+        if type(name) is not str or type(age) is not int or type(gender) is not str:
+            raise RequestError(
+                {"code": "invalid_format", "description": "Invalid actor details"},
+                400,
+            )
+        try:
+            actor = Actors(name, age, gender)
+            actor.insert()
+        except:
+            abort(500)
+
+        return jsonify({"success": True, "actor": actor.format()})
 
     @app.errorhandler(AuthError)
     def handle_auth_error(error):
@@ -95,6 +129,15 @@ def create_app(database_path=None):
         return (
             jsonify({"success": False, "error": error.error}),
             error.status_code,
+        )
+
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        return (
+            jsonify(
+                {"success": False, "error": 500, "message": "Internal server error"}
+            ),
+            500,
         )
 
     return app
