@@ -261,6 +261,19 @@ class ActorsTestCase(unittest.TestCase):
             assert data.get("success") == False
             assert data.get("actor") is None
 
+    def test_400_update_with_invalid_format(self):
+        if role in [casting_director, executive_producer]:
+            actor = {"name": 12, "age": "hello", "gender": "male"}
+            res = self.client.patch(
+                "/actors/1",
+                headers=self.headers,
+                data=json.dumps(actor),
+            )
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data.get("success") == False
+            assert data.get("actor") is None
+
 
 if __name__ == "__main__":
     unittest.main()
