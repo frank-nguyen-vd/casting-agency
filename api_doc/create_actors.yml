@@ -6,12 +6,12 @@ tags:
 parameters:
   - in: body
     name: actor
-    description: an actor details to be created
+    description: The actor details to be created
     schema:
       $ref: "#/definitions/Actors"
 responses:
   200:
-    description: A list of actors
+    description: The newly created actor
     schema:
       type: object
       properties:
