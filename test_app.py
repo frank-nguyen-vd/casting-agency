@@ -84,13 +84,13 @@ class MoviesTestCase(unittest.TestCase):
         db.drop_all()
 
     def test_200_get_paginated_resource(self):
-        page = 1
-        size = 10
-        res = self.client.get(
-            "/movies?page={}&size={}".format(page, size), headers=self.headers
-        )
-
         if role in [casting_assistant, casting_director, executive_producer]:
+            page = 1
+            size = 10
+            res = self.client.get(
+                "/movies?page={}&size={}".format(page, size), headers=self.headers
+            )
+
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data.get("success") == True
@@ -103,23 +103,23 @@ class MoviesTestCase(unittest.TestCase):
             assert data["page"] == page
 
     def test_401_unauthorized_get_resource(self):
-        page = 1
-        size = 10
-        res = self.client.get(
-            "/movies?page={}&size={}".format(page, size), headers=self.headers
-        )
-
         if role not in [casting_assistant, casting_director, executive_producer]:
+            page = 1
+            size = 10
+            res = self.client.get(
+                "/movies?page={}&size={}".format(page, size), headers=self.headers
+            )
+
             assert res.status_code == 401
 
     def test_404_request_beyond_valid_page(self):
-        page = 100000
-        size = 100000
-        res = self.client.get(
-            "/movies?page={}&size={}".format(page, size), headers=self.headers
-        )
-
         if role in [casting_assistant, casting_director, executive_producer]:
+            page = 100000
+            size = 100000
+            res = self.client.get(
+                "/movies?page={}&size={}".format(page, size), headers=self.headers
+            )
+
             assert res.status_code == 404
 
 
@@ -137,13 +137,13 @@ class ActorsTestCase(unittest.TestCase):
         db.drop_all()
 
     def test_200_get_paginated_resource(self):
-        page = 1
-        size = 10
-        res = self.client.get(
-            "/actors?page={}&size={}".format(page, size), headers=self.headers
-        )
-
         if role in [casting_assistant, casting_director, executive_producer]:
+            page = 1
+            size = 10
+            res = self.client.get(
+                "/actors?page={}&size={}".format(page, size), headers=self.headers
+            )
+
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data["success"] == True
@@ -156,13 +156,13 @@ class ActorsTestCase(unittest.TestCase):
             assert data["page"] == page
 
     def test_401_unauthorized_get_resource(self):
-        page = 1
-        size = 10
-        res = self.client.get(
-            "/actors?page={}&size={}".format(page, size), headers=self.headers
-        )
-
         if role not in [casting_assistant, casting_director, executive_producer]:
+            page = 1
+            size = 10
+            res = self.client.get(
+                "/actors?page={}&size={}".format(page, size), headers=self.headers
+            )
+
             assert res.status_code == 401
 
     def test_404_request_beyond_valid_page(self):
@@ -176,14 +176,14 @@ class ActorsTestCase(unittest.TestCase):
             assert res.status_code == 404
 
     def test_200_create_new_resource(self):
-        actor = {"name": "Scary Hamlet", "age": 21, "gender": "male"}
-        res = self.client.post(
-            "/actors",
-            headers=self.headers,
-            data=json.dumps(actor),
-        )
-
         if role in [casting_director, executive_producer]:
+            actor = {"name": "Scary Hamlet", "age": 21, "gender": "male"}
+            res = self.client.post(
+                "/actors",
+                headers=self.headers,
+                data=json.dumps(actor),
+            )
+
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data["success"] == True
@@ -232,14 +232,14 @@ class ActorsTestCase(unittest.TestCase):
             assert data.get("actor") is None
 
     def test_200_update_resource(self):
-        actor = {"name": "Scary Hamlet", "age": 21, "gender": "male"}
-        res = self.client.patch(
-            "/actors/1",
-            headers=self.headers,
-            data=json.dumps(actor),
-        )
-
         if role in [casting_director, executive_producer]:
+            actor = {"name": "Scary Hamlet", "age": 21, "gender": "male"}
+            res = self.client.patch(
+                "/actors/1",
+                headers=self.headers,
+                data=json.dumps(actor),
+            )
+
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data["success"] == True
