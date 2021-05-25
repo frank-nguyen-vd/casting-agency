@@ -251,7 +251,7 @@ class ActorsTestCase(unittest.TestCase):
     def test_400_update_with_empty_data(self):
         if role in [casting_director, executive_producer]:
             actor = {}
-            res = self.client.post(
+            res = self.client.patch(
                 "/actors/1",
                 headers=self.headers,
                 data=json.dumps(actor),
