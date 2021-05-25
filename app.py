@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, redirect, request
 from dotenv import load_dotenv
 from flask_cors import CORS
-from flasgger import Swagger
+from flasgger import Swagger, swag_from
 from icecream import ic
 
 
@@ -45,48 +45,8 @@ def create_app(database_path=None):
 
     @app.route("/movies")
     @requires_auth("read:movies")
+    @swag_from("api_doc/get_movies.yml")
     def get_movies(payload):
-        """Get a paginated list of movies
-        ---
-        tags:
-            - Movies
-
-        definitions:
-            Movies:
-                type: object
-                properties:
-                    title:
-                        type: string
-                    release_date:
-                        type: string
-        parameters:
-            -   in: query
-                name: page
-                type: integer
-                default: 1
-                description: the page number of the paginated result
-            -   in: query
-                name: size
-                type: integer
-                default: 10
-                description: the number of items per page
-        responses:
-            200:
-                description: A list of movies
-                schema:
-                    type: object
-                    properties:
-                        success:
-                            type: boolean
-                        movies:
-                            type: array
-                            items:
-                                $ref: '#/definitions/Movies'
-                        total:
-                            type: number
-                        page:
-                            type: number
-        """
         page = request.args.get("page", 1, type=int)
         size = request.args.get("size", 10, type=int)
         itemsList = Movies.query.order_by(Movies.id).all()
@@ -102,50 +62,8 @@ def create_app(database_path=None):
 
     @app.route("/actors")
     @requires_auth("read:actors")
+    @swag_from("api_doc/get_actors.yml")
     def get_actors(payload):
-        """Get a paginated list of actors
-        ---
-        tags:
-            - Actors
-
-        definitions:
-            Actors:
-                type: object
-                properties:
-                    name:
-                        type: string
-                    age:
-                        type: integer
-                    gender:
-                        type: string
-        parameters:
-            -   in: query
-                name: page
-                type: integer
-                default: 1
-                description: the page number of the paginated result
-            -   in: query
-                name: size
-                type: integer
-                default: 10
-                description: the number of items per page
-        responses:
-            200:
-                description: A list of actors
-                schema:
-                    type: object
-                    properties:
-                        success:
-                            type: boolean
-                        actors:
-                            type: array
-                            items:
-                                $ref: '#/definitions/Actors'
-                        total:
-                            type: number
-                        page:
-                            type: number
-        """
         page = request.args.get("page", 1, type=int)
         size = request.args.get("size", 10, type=int)
         itemsList = Actors.query.order_by(Actors.id).all()
@@ -158,6 +76,12 @@ def create_app(database_path=None):
                 "total": len(itemsList),
             }
         )
+
+    @app.route("/actors", methods=["POST"])
+    @requires_auth("create:actors")
+    @swag_from("api_doc/create_actors.yml")
+    def create_actors(payload):
+        pass
 
     @app.errorhandler(AuthError)
     def handle_auth_error(error):
