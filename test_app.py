@@ -12,8 +12,14 @@ from database.actors import Actors
 
 load_dotenv()
 
-role = ""
-roleList = ["casting_assistant", "casting_director", "executive_producer"]
+public = ""
+casting_assistant = "casting_assistant"
+casting_director = "casting_director"
+executive_producer = "executive_producer"
+
+role = public
+
+
 if "TEST_ROLE" in os.environ:
     role = os.environ["TEST_ROLE"]
 
@@ -84,7 +90,7 @@ class MoviesTestCase(unittest.TestCase):
             "/movies?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role in roleList:
+        if role in [casting_assistant, casting_director, executive_producer]:
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data["success"] == True
@@ -102,7 +108,7 @@ class MoviesTestCase(unittest.TestCase):
             "/movies?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role not in roleList:
+        if role not in [casting_assistant, casting_director, executive_producer]:
             assert res.status_code == 401
 
     def test_404_request_beyond_valid_page(self):
@@ -112,7 +118,7 @@ class MoviesTestCase(unittest.TestCase):
             "/movies?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role in roleList:
+        if role in [casting_assistant, casting_director, executive_producer]:
             assert res.status_code == 404
 
 
@@ -136,7 +142,7 @@ class ActorsTestCase(unittest.TestCase):
             "/actors?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role in roleList:
+        if role in [casting_assistant, casting_director, executive_producer]:
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data["success"] == True
@@ -155,7 +161,7 @@ class ActorsTestCase(unittest.TestCase):
             "/actors?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role not in roleList:
+        if role not in [casting_assistant, casting_director, executive_producer]:
             assert res.status_code == 401
 
     def test_404_request_beyond_valid_page(self):
@@ -165,7 +171,7 @@ class ActorsTestCase(unittest.TestCase):
             "/actors?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role in roleList:
+        if role in [casting_assistant, casting_director, executive_producer]:
             assert res.status_code == 404
 
     def test_200_create_new_resource(self):
