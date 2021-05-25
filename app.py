@@ -117,10 +117,10 @@ def create_app(database_path=None):
 
         return jsonify({"success": True, "actor": actor.format()})
 
-    @app.route("/actors/{int:id}", methods=["PATCH"])
+    @app.route("/actors/<int:id>", methods=["PATCH"])
     @requires_auth("update:actors")
     @swag_from("api_doc/update_actors.yml")
-    def update_actors(payload, actorId):
+    def update_actors(payload, id):
         reqBody = request.get_json()
         if reqBody is None:
             raise RequestError(
