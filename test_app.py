@@ -105,6 +105,17 @@ class MoviesTestCase(unittest.TestCase):
         if role not in roleList:
             assert res.status_code == 401
 
+    def test_404_request_beyond_valid_page(self):
+        page = 100000
+        size = 100000
+        res = self.client.get(
+            "/movies?page={}&size={}".format(page, size), headers=self.headers
+        )
+
+        if role in roleList:
+            assert res.status_code == 404
+
+
 class ActorsTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app(testdb_path)
