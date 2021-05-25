@@ -147,10 +147,25 @@ def create_app(database_path=None):
             )
 
         if name is not None:
+            if type(name) is not str:
+                raise RequestError(
+                    {"code": "invalid_format", "description": "Invalid actor details"},
+                    400,
+                )
             actor.name = name
         if age is not None:
+            if type(age) is not int:
+                raise RequestError(
+                    {"code": "invalid_format", "description": "Invalid actor details"},
+                    400,
+                )
             actor.age = age
         if gender is not None:
+            if type(gender) is not str:
+                raise RequestError(
+                    {"code": "invalid_format", "description": "Invalid actor details"},
+                    400,
+                )
             actor.gender = gender
 
         try:
