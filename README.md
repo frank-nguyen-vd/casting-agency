@@ -61,21 +61,21 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 1. Architect relational database models in Python
 
-   - [ ] Use of correct data types for fields
+   - [x] Use of correct data types for fields
    - [ ] Use of primary and optional foreign key ids
 
 2. Utilize SQLAlchemy to conduct database queries
 
-   - [ ] Does not use raw SQL or only where there are not SQLAlchemy equivalent expressions
-   - [ ] Correctly formats SQLAlchemy to define models
-   - [ ] Creates methods to serialize model data and helper methods to simplify API behavior such as insert, update and delete.
+   - [x] Does not use raw SQL or only where there are not SQLAlchemy equivalent expressions
+   - [x] Correctly formats SQLAlchemy to define models
+   - [x] Creates methods to serialize model data and helper methods to simplify API behavior such as insert, update and delete.
 
 ### API Architecture and Testing
 
 1.  Follow RESTful principles of API development
 
-    - [ ] RESTful principles are followed throughout the project, including appropriate naming of endpoints, use of HTTP methods GET, POST, PATCH and DELETE
-    - [ ] Routes perform CRUD operations
+    - [x] RESTful principles are followed throughout the project, including appropriate naming of endpoints, use of HTTP methods GET, POST, PATCH and DELETE
+    - [x] Routes perform CRUD operations
 
 2.  Structure endpoints to respond to four HTTP methods, including error handling
 
@@ -84,7 +84,7 @@ The Casting Agency models a company that is responsible for creating movies and 
       - One POST request
       - One PATCH request
       - One DELETE request
-    - [ ] Utilize the `@app.errorhandler` decorator to format error responses as JSON objects for at least four different status codes
+    - [x] Utilize the `@app.errorhandler` decorator to format error responses as JSON objects for at least four different status codes
 
 3.  Enable RBAC
 
@@ -101,8 +101,8 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 4.  Demonstrate validity of API behavior
 
-    - [ ] Includes at least one test for expected success and error behaviour for each endpoint using the unittest library
-    - [ ] Includes tests demonstrating RBAC, at least two per role
+    - [x] Includes at least one test for expected success and error behaviour for each endpoint using the unittest library
+    - [x] Includes tests demonstrating RBAC, at least two per role
 
  <br/>
 
@@ -121,8 +121,8 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 1. Write clear, concise and well documented code
    The code adheres to the PEP 8 style guide and follows common best practices, including:
-   - [ ] Variable and function names are clear.
-   - [ ] Endpoints are logically named.
+   - [x] Variable and function names are clear.
+   - [x] Endpoints are logically named.
    - [ ] Code is commented appropriately.
    - [ ] Secrets are stored as environment variables.
 2. Project demonstrates reliability and testability
