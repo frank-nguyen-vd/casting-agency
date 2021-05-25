@@ -187,9 +187,19 @@ class ActorsTestCase(unittest.TestCase):
             assert res.status_code == 200
             assert data["success"] == True
 
-            assert data["actor"]["name"] == actor["name"]
-            assert data["actor"]["age"] == actor["age"]
-            assert data["actor"]["gender"] == actor["gender"]
+    def test_400_create_with_invalid_data(self):
+        actor = {}
+        res = self.client.post(
+            "/actors",
+            headers=self.headers,
+            data=json.dumps(actor),
+        )
+
+        if role == [casting_director, executive_producer]:
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data.get("success") == False
+            assert data.get("actor") is None
 
 
 if __name__ == "__main__":
