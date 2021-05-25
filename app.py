@@ -131,6 +131,13 @@ def create_app(database_path=None):
             error.status_code,
         )
 
+    @app.errorhandler(RequestError)
+    def handle_request_error(error):
+        return (
+            jsonify({"success": False, "error": error.error}),
+            error.status_code,
+        )
+
     @app.errorhandler(500)
     def internal_server_error(error):
         return (
