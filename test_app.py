@@ -77,10 +77,23 @@ class MoviesTestCase(unittest.TestCase):
     def tearDown(self):
         db.drop_all()
 
-    def test_get_paginated_movies(self):
-        res = self.client.get("/movies", headers=self.headers)
+    def test_200_get_paginated_resource(self):
+        page = 1
+        size = 10
+        res = self.client.get(
+            "/movies?page={}&size={}".format(page, size), headers=self.headers
+        )
+
         if role in roleList:
+            data = json.loads(res.data)
             assert res.status_code == 200
+            assert data["success"] == True
+
+            assert type(data["movies"][0]["title"]) is str
+            assert type(data["movies"][0]["release_date"]) is str
+
+            assert data["total"] > 0
+            assert data["page"] == page
 
 
 class ActorsTestCase(unittest.TestCase):
