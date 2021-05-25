@@ -1,17 +1,23 @@
-Create a new actor profile
+Update a new actor profile
 ---
 tags:
   - Actors
-
 parameters:
+  - in: path
+    name: id
+    description: The id of the actor to be updated
+    required: true
+    schema:
+      type: integer
+      minimum: 1
   - in: body
     name: actor
-    description: The actor details to be created
+    description: The actor details to be updated
     schema:
       $ref: "#/definitions/Actors"
 responses:
   200:
-    description: The newly created actor
+    description: The updated actor profile
     schema:
       type: object
       properties:

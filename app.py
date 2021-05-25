@@ -117,6 +117,64 @@ def create_app(database_path=None):
 
         return jsonify({"success": True, "actor": actor.format()})
 
+    @app.route("/actors/<int:id>", methods=["PATCH"])
+    @requires_auth("update:actors")
+    @swag_from("api_doc/update_actors.yml")
+    def update_actors(payload, id):
+        reqBody = request.get_json()
+        if reqBody is None:
+            raise RequestError(
+                {"code": "empty_content", "description": "No actor details provided"},
+                400,
+            )
+
+        name = reqBody.get("name")
+        age = reqBody.get("age")
+        gender = reqBody.get("gender")
+
+        if name is None and age is None and gender is None:
+            raise RequestError(
+                {"code": "empty_content", "description": "No actor details provided"},
+                400,
+            )
+
+        try:
+            actor = Actors.query.get(id)
+        except:
+            raise RequestError(
+                {"code": "not_found", "description": "No such an actor found"},
+                404,
+            )
+
+        if name is not None:
+            if type(name) is not str:
+                raise RequestError(
+                    {"code": "invalid_format", "description": "Invalid actor details"},
+                    400,
+                )
+            actor.name = name
+        if age is not None:
+            if type(age) is not int:
+                raise RequestError(
+                    {"code": "invalid_format", "description": "Invalid actor details"},
+                    400,
+                )
+            actor.age = age
+        if gender is not None:
+            if type(gender) is not str:
+                raise RequestError(
+                    {"code": "invalid_format", "description": "Invalid actor details"},
+                    400,
+                )
+            actor.gender = gender
+
+        try:
+            actor.update()
+        except:
+            abort(500)
+
+        return jsonify({"success": True, "actor": actor.format()})
+
     @app.errorhandler(AuthError)
     def handle_auth_error(error):
         return (
