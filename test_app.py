@@ -12,8 +12,14 @@ from database.actors import Actors
 
 load_dotenv()
 
-role = ""
-roleList = ["casting_assistant", "casting_director", "executive_producer"]
+public = ""
+casting_assistant = "casting_assistant"
+casting_director = "casting_director"
+executive_producer = "executive_producer"
+
+role = public
+
+
 if "TEST_ROLE" in os.environ:
     role = os.environ["TEST_ROLE"]
 
@@ -84,11 +90,12 @@ class MoviesTestCase(unittest.TestCase):
             "/movies?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role in roleList:
+        if role in [casting_assistant, casting_director, executive_producer]:
             data = json.loads(res.data)
             assert res.status_code == 200
-            assert data["success"] == True
-
+            assert data.get("success") == True
+            assert data.get("movies") is not None
+            assert type(data["movies"]) is list
             assert type(data["movies"][0]["title"]) is str
             assert type(data["movies"][0]["release_date"]) is str
 
@@ -102,7 +109,7 @@ class MoviesTestCase(unittest.TestCase):
             "/movies?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role not in roleList:
+        if role not in [casting_assistant, casting_director, executive_producer]:
             assert res.status_code == 401
 
     def test_404_request_beyond_valid_page(self):
@@ -112,7 +119,7 @@ class MoviesTestCase(unittest.TestCase):
             "/movies?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role in roleList:
+        if role in [casting_assistant, casting_director, executive_producer]:
             assert res.status_code == 404
 
 
@@ -136,11 +143,11 @@ class ActorsTestCase(unittest.TestCase):
             "/actors?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role in roleList:
+        if role in [casting_assistant, casting_director, executive_producer]:
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data["success"] == True
-
+            assert data.get("actors") is not None
             assert type(data["actors"][0]["name"]) is str
             assert type(data["actors"][0]["age"]) is int
             assert type(data["actors"][0]["gender"]) is str
@@ -155,7 +162,7 @@ class ActorsTestCase(unittest.TestCase):
             "/actors?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role not in roleList:
+        if role not in [casting_assistant, casting_director, executive_producer]:
             assert res.status_code == 401
 
     def test_404_request_beyond_valid_page(self):
@@ -165,8 +172,64 @@ class ActorsTestCase(unittest.TestCase):
             "/actors?page={}&size={}".format(page, size), headers=self.headers
         )
 
-        if role in roleList:
+        if role in [casting_assistant, casting_director, executive_producer]:
             assert res.status_code == 404
+
+    def test_200_create_new_resource(self):
+        actor = {"name": "Scary Hamlet", "age": 21, "gender": "male"}
+        res = self.client.post(
+            "/actors",
+            headers=self.headers,
+            data=json.dumps(actor),
+        )
+
+        if role in [casting_director, executive_producer]:
+            data = json.loads(res.data)
+            assert res.status_code == 200
+            assert data["success"] == True
+            assert data.get("actor") is not None
+            assert data["actor"].get("name") == actor["name"]
+            assert data["actor"].get("age") == actor["age"]
+            assert data["actor"].get("gender") == actor["gender"]
+
+    def test_400_create_with_empty_data(self):
+        if role in [casting_director, executive_producer]:
+            actor = {}
+            res = self.client.post(
+                "/actors",
+                headers=self.headers,
+                data=json.dumps(actor),
+            )
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data.get("success") == False
+            assert data.get("actor") is None
+
+    def test_400_create_with_invalid_format(self):
+        if role in [casting_director, executive_producer]:
+            actor = {"name": 12, "age": "hello", "gender": "male"}
+            res = self.client.post(
+                "/actors",
+                headers=self.headers,
+                data=json.dumps(actor),
+            )
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data.get("success") == False
+            assert data.get("actor") is None
+
+    def test_400_create_with_missing_field(self):
+        if role in [casting_director, executive_producer]:
+            actor = {"name": "John", "age": 31}
+            res = self.client.post(
+                "/actors",
+                headers=self.headers,
+                data=json.dumps(actor),
+            )
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data.get("success") == False
+            assert data.get("actor") is None
 
 
 if __name__ == "__main__":
