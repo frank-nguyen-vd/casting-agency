@@ -212,6 +212,15 @@ class ActorsTestCase(unittest.TestCase):
             assert res.status_code == 400
             assert data.get("success") == False
             assert data.get("actor") is None
+
+    def test_400_create_with_missing_field(self):
+        if role in [casting_director, executive_producer]:
+            actor = {"name": "John", "age": 31}
+            res = self.client.post(
+                "/actors",
+                headers=self.headers,
+                data=json.dumps(actor),
+            )
             data = json.loads(res.data)
             assert res.status_code == 400
             assert data.get("success") == False
