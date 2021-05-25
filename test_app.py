@@ -248,6 +248,19 @@ class ActorsTestCase(unittest.TestCase):
             assert data["actor"].get("age") == actor["age"]
             assert data["actor"].get("gender") == actor["gender"]
 
+    def test_400_update_with_empty_data(self):
+        if role in [casting_director, executive_producer]:
+            actor = {}
+            res = self.client.post(
+                "/actors/1",
+                headers=self.headers,
+                data=json.dumps(actor),
+            )
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data.get("success") == False
+            assert data.get("actor") is None
+
 
 if __name__ == "__main__":
     unittest.main()
