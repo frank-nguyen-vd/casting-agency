@@ -231,6 +231,23 @@ class ActorsTestCase(unittest.TestCase):
             assert data.get("success") == False
             assert data.get("actor") is None
 
+    def test_200_update_resource(self):
+        actor = {"name": "Scary Hamlet", "age": 21, "gender": "male"}
+        res = self.client.patch(
+            "/actors/1",
+            headers=self.headers,
+            data=json.dumps(actor),
+        )
+
+        if role in [casting_director, executive_producer]:
+            data = json.loads(res.data)
+            assert res.status_code == 200
+            assert data["success"] == True
+            assert data.get("actor") is not None
+            assert data["actor"].get("name") == actor["name"]
+            assert data["actor"].get("age") == actor["age"]
+            assert data["actor"].get("gender") == actor["gender"]
+
 
 if __name__ == "__main__":
     unittest.main()
