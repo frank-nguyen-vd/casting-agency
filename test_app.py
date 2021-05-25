@@ -129,7 +129,7 @@ class ActorsTestCase(unittest.TestCase):
     def tearDown(self):
         db.drop_all()
 
-    def test_200_get_paginated_actors(self):
+    def test_200_get_paginated_resource(self):
         page = 1
         size = 10
         res = self.client.get(
@@ -148,7 +148,7 @@ class ActorsTestCase(unittest.TestCase):
             assert data["total"] > 0
             assert data["page"] == page
 
-    def test_401_unauthorized_get_actors(self):
+    def test_401_unauthorized_get_resource(self):
         page = 1
         size = 10
         res = self.client.get(
