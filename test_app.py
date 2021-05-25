@@ -77,10 +77,43 @@ class MoviesTestCase(unittest.TestCase):
     def tearDown(self):
         db.drop_all()
 
-    def test_get_paginated_movies(self):
-        res = self.client.get("/movies", headers=self.headers)
+    def test_200_get_paginated_resource(self):
+        page = 1
+        size = 10
+        res = self.client.get(
+            "/movies?page={}&size={}".format(page, size), headers=self.headers
+        )
+
         if role in roleList:
+            data = json.loads(res.data)
             assert res.status_code == 200
+            assert data["success"] == True
+
+            assert type(data["movies"][0]["title"]) is str
+            assert type(data["movies"][0]["release_date"]) is str
+
+            assert data["total"] > 0
+            assert data["page"] == page
+
+    def test_401_unauthorized_get_resource(self):
+        page = 1
+        size = 10
+        res = self.client.get(
+            "/movies?page={}&size={}".format(page, size), headers=self.headers
+        )
+
+        if role not in roleList:
+            assert res.status_code == 401
+
+    def test_404_request_beyond_valid_page(self):
+        page = 100000
+        size = 100000
+        res = self.client.get(
+            "/movies?page={}&size={}".format(page, size), headers=self.headers
+        )
+
+        if role in roleList:
+            assert res.status_code == 404
 
 
 class ActorsTestCase(unittest.TestCase):
@@ -96,7 +129,7 @@ class ActorsTestCase(unittest.TestCase):
     def tearDown(self):
         db.drop_all()
 
-    def test_200_get_paginated_actors(self):
+    def test_200_get_paginated_resource(self):
         page = 1
         size = 10
         res = self.client.get(
@@ -115,7 +148,7 @@ class ActorsTestCase(unittest.TestCase):
             assert data["total"] > 0
             assert data["page"] == page
 
-    def test_401_unauthorized_get_actors(self):
+    def test_401_unauthorized_get_resource(self):
         page = 1
         size = 10
         res = self.client.get(

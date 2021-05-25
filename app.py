@@ -87,9 +87,18 @@ def create_app(database_path=None):
                         page:
                             type: number
         """
-        obj_list = Movies.query.all()
-        str_list = [str(obj) for obj in obj_list]
-        return jsonify({"success": True, "data": str_list})
+        page = request.args.get("page", 1, type=int)
+        size = request.args.get("size", 10, type=int)
+        itemsList = Movies.query.order_by(Movies.id).all()
+        selectedItems = paginate(itemsList, page, size)
+        return jsonify(
+            {
+                "success": True,
+                "movies": selectedItems,
+                "page": page,
+                "total": len(itemsList),
+            }
+        )
 
     @app.route("/actors")
     @requires_auth("read:actors")
