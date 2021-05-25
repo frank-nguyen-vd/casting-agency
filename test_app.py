@@ -93,8 +93,9 @@ class MoviesTestCase(unittest.TestCase):
         if role in [casting_assistant, casting_director, executive_producer]:
             data = json.loads(res.data)
             assert res.status_code == 200
-            assert data["success"] == True
-
+            assert data.get("success") == True
+            assert data.get("movies") is not None
+            assert type(data["movies"]) is list
             assert type(data["movies"][0]["title"]) is str
             assert type(data["movies"][0]["release_date"]) is str
 
@@ -146,7 +147,7 @@ class ActorsTestCase(unittest.TestCase):
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data["success"] == True
-
+            assert data.get("actors") is not None
             assert type(data["actors"][0]["name"]) is str
             assert type(data["actors"][0]["age"]) is int
             assert type(data["actors"][0]["gender"]) is str
@@ -186,6 +187,10 @@ class ActorsTestCase(unittest.TestCase):
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data["success"] == True
+            assert data.get("actor") is not None
+            assert data["actor"].get("name") == actor["name"]
+            assert data["actor"].get("age") == actor["age"]
+            assert data["actor"].get("gender") == actor["gender"]
 
     def test_400_create_with_invalid_data(self):
         actor = {}
