@@ -183,7 +183,7 @@ class ActorsTestCase(unittest.TestCase):
             data=json.dumps(actor),
         )
 
-        if role == [casting_director, executive_producer]:
+        if role in [casting_director, executive_producer]:
             data = json.loads(res.data)
             assert res.status_code == 200
             assert data["success"] == True
@@ -192,13 +192,18 @@ class ActorsTestCase(unittest.TestCase):
             assert data["actor"].get("age") == actor["age"]
             assert data["actor"].get("gender") == actor["gender"]
 
-    def test_400_create_with_invalid_data(self):
-        actor = {}
-        res = self.client.post(
-            "/actors",
-            headers=self.headers,
-            data=json.dumps(actor),
-        )
+    def test_400_create_with_empty_data(self):
+        if role in [casting_director, executive_producer]:
+            actor = {}
+            res = self.client.post(
+                "/actors",
+                headers=self.headers,
+                data=json.dumps(actor),
+            )
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data.get("success") == False
+            assert data.get("actor") is None
 
     def test_400_create_with_invalid_format(self):
         if role in [casting_director, executive_producer]:
