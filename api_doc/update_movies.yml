@@ -1,31 +1,31 @@
-Update an actor profile
+Update movies details
 ---
 tags:
-  - Actors
+  - Movies
 parameters:
   - in: path
     name: id
-    description: The id of the actor to be updated
+    description: The id of the movies to be updated
     required: true
     schema:
       type: integer
       minimum: 1
   - in: body
-    name: actor
-    description: The actor details to be updated
+    name: movies
+    description: The movies details to be updated
     schema:
-      $ref: "#/definitions/Actors"
+      $ref: "#/definitions/movies"
 responses:
   200:
-    description: The updated actor profile
+    description: The updated movies profile
     schema:
       type: object
       properties:
         success:
           type: boolean
-        actor:
+        movies:
           allOf:
-            - $ref: "#/definitions/Actors"
+            - $ref: "#/definitions/Movies"
             - type: object
               properties:
                 id:
