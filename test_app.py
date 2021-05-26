@@ -160,13 +160,18 @@ class MoviesTestCase(unittest.TestCase):
             assert data["total"] > 0
             assert data["page"] == page
 
-    def test_401_unauthorized_get_resource(self):
-        if role not in [casting_assistant, casting_director, executive_producer]:
-            page = 1
-            size = 10
-            res = self.client.get(
-                "/movies?page={}&size={}".format(page, size), headers=self.headers
-            )
+    def test_200_get_resource_by_id(self):
+        if role in [casting_assistant, casting_director, executive_producer]:
+            id = 1
+            res = self.client.get(f"/movies/{id}", headers=self.headers)
+
+            data = json.loads(res.data)
+            assert res.status_code == 200
+            assert data.get("success") == True
+            assert data.get("movie") is not None
+            assert type(data["movie"].get("title")) is str
+            assert type(data["movie"].get("release_date")) is str
+
 
             assert res.status_code == 401
 
