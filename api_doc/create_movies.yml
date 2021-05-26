@@ -1,0 +1,26 @@
+Create a new movies
+---
+tags:
+  - Movies
+
+parameters:
+  - in: body
+    name: movies
+    description: The movies details to be created
+    schema:
+      $ref: "#/definitions/Movies"
+responses:
+  200:
+    description: The newly created movies
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        movies:
+          allOf:
+            - $ref: "#/definitions/Movies"
+            - type: object
+              properties:
+                id:
+                  type: number
