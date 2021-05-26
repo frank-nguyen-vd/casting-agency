@@ -221,6 +221,25 @@ class MoviesTestCase(unittest.TestCase):
             assert res.status_code == 400
             assert data["success"] == False
 
+    def test_200_delete_resource(self):
+        if role in [executive_producer]:
+            id = 1
+            res = self.client.delete(f"/movies/{id}", headers=self.headers)
+
+            data = json.loads(res.data)
+            assert res.status_code == 200
+            assert data["success"] == True
+            assert data.get("deleted") == id
+
+    def test_404_delete_not_existing_resource(self):
+        if role in [executive_producer]:
+            id = 10000000
+            res = self.client.delete(f"/movies/{id}", headers=self.headers)
+
+            data = json.loads(res.data)
+            assert res.status_code == 404
+            assert data["success"] == False
+
 
 class ActorsTestCase(unittest.TestCase):
     def setUp(self):
