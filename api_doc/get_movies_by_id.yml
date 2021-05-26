@@ -1,0 +1,26 @@
+Get details of a movie by id
+---
+tags:
+  - Movies
+
+parameters:
+  - in: path
+    name: id
+    description: the id of a movie
+    type: integer
+    minimum: 1
+responses:
+  200:
+    description: The details of the request movie
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        movie:
+          allOf:
+            - $ref: "#/definitions/Movies"
+            - type: object
+              properties:
+                id:
+                  type: number
