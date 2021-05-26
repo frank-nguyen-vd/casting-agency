@@ -180,6 +180,21 @@ class MoviesTestCase(unittest.TestCase):
 
             assert res.status_code == 404
 
+    def test_200_update_resource(self):
+        if role in [casting_director, executive_producer]:
+            movies = {"title": "Worried Tom"}
+            res = self.client.patch(
+                "/movies/1",
+                headers=self.headers,
+                data=json.dumps(movies),
+            )
+
+            data = json.loads(res.data)
+            assert res.status_code == 200
+            assert data["success"] == True
+            assert data.get("movies") is not None
+            assert data["movies"].get("title") == movies["title"]
+
 
 class ActorsTestCase(unittest.TestCase):
     def setUp(self):
