@@ -1,0 +1,26 @@
+Get details of an actor by id
+---
+tags:
+  - Movies
+
+parameters:
+  - in: path
+    name: id
+    description: the id of an actor
+    type: integer
+    minimum: 1
+responses:
+  200:
+    description: The details of the requested actor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        actor:
+          allOf:
+            - $ref: "#/definitions/Actors"
+            - type: object
+              properties:
+                id:
+                  type: number

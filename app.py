@@ -98,7 +98,6 @@ def create_app(database_path=None):
     @swag_from("api_doc/get_movies_by_id.yml")
     def get_movies_by_id(payload, id):
         movie = Movies.query.get(id)
-        ic(movie)
         if movie is None:
             raise RequestError(
                 {"code": "not_found", "description": "No such movies found"},
@@ -300,6 +299,18 @@ def create_app(database_path=None):
             abort(500)
 
         return jsonify({"success": True, "deleted": id})
+
+    @app.route("/actors/<int:id>")
+    @requires_auth("read:actors")
+    @swag_from("api_doc/get_actors_by_id.yml")
+    def get_actors_by_id(payload, id):
+        actor = Actors.query.get(id)
+        if actor is None:
+            raise RequestError(
+                {"code": "not_found", "description": "No such actor found"},
+                404,
+            )
+        return jsonify({"success": True, "actor": actor.format()})
 
     @app.errorhandler(AuthError)
     def handle_auth_error(error):
