@@ -125,6 +125,19 @@ class MoviesTestCase(unittest.TestCase):
             assert res.status_code == 400
             assert data["success"] == False
 
+    def test_400_create_with_invalid_format(self):
+        if role in [executive_producer]:
+            movies = {"title": 0, "release_date": True}
+            res = self.client.post(
+                "/movies",
+                headers=self.headers,
+                data=json.dumps(movies),
+            )
+
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data["success"] == False
+
     def test_200_get_paginated_resource(self):
         if role in [casting_assistant, casting_director, executive_producer]:
             page = 1
