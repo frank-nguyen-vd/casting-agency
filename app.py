@@ -175,6 +175,24 @@ def create_app(database_path=None):
 
         return jsonify({"success": True, "actor": actor.format()})
 
+    @app.route("/actors/<int:id>", methods=["DELETE"])
+    @requires_auth("delete:actors")
+    @swag_from("api_doc/delete_actors.yml")
+    def delete_actors(payload, id):
+        actor = Actors.query.get(id)
+        if actor is None:
+            raise RequestError(
+                {"code": "not_found", "description": "Actor not found"},
+                404,
+            )
+
+        try:
+            actor.delete()
+        except:
+            abort(500)
+
+        return jsonify({"success": True, "deleted": id})
+
     @app.errorhandler(AuthError)
     def handle_auth_error(error):
         return (
