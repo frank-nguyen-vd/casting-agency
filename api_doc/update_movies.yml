@@ -1,0 +1,32 @@
+Update movies details
+---
+tags:
+  - Movies
+parameters:
+  - in: path
+    name: id
+    description: The id of the movies to be updated
+    required: true
+    schema:
+      type: integer
+      minimum: 1
+  - in: body
+    name: movies
+    description: The movies details to be updated
+    schema:
+      $ref: "#/definitions/movies"
+responses:
+  200:
+    description: The updated movies profile
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        movies:
+          allOf:
+            - $ref: "#/definitions/Movies"
+            - type: object
+              properties:
+                id:
+                  type: number

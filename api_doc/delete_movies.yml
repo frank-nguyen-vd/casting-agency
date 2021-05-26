@@ -1,0 +1,23 @@
+Delete an existing movies
+---
+tags:
+  - Movies
+parameters:
+  - in: path
+    name: id
+    description: The id of the movies to be delete
+    required: true
+    schema:
+      type: integer
+      minimum: 1
+responses:
+  200:
+    description: The deleted movies id
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        deleted:
+          id:
+            type: number

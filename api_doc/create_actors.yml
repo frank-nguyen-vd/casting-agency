@@ -1,0 +1,26 @@
+Create a new actor profile
+---
+tags:
+  - Actors
+
+parameters:
+  - in: body
+    name: actor
+    description: The actor details to be created
+    schema:
+      $ref: "#/definitions/Actors"
+responses:
+  200:
+    description: The newly created actor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        actor:
+          allOf:
+            - $ref: "#/definitions/Actors"
+            - type: object
+              properties:
+                id:
+                  type: number

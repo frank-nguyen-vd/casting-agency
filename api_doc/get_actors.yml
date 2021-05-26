@@ -1,0 +1,47 @@
+Get a paginated list of actors
+---
+tags:
+  - Actors
+
+definitions:
+  Actors:
+    type: object
+    properties:
+      name:
+        type: string
+      age:
+        type: integer
+      gender:
+        type: string
+parameters:
+  - in: query
+    name: page
+    type: integer
+    default: 1
+    description: the page number of the paginated result
+  - in: query
+    name: size
+    type: integer
+    default: 10
+    description: the number of items per page
+responses:
+  200:
+    description: A list of actors
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        actors:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/definitions/Actors"
+              - type: object
+                properties:
+                  id:
+                    type: number
+        total:
+          type: number
+        page:
+          type: number

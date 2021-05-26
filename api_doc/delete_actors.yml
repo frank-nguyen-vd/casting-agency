@@ -1,0 +1,23 @@
+Delete an existing actor
+---
+tags:
+  - Actors
+parameters:
+  - in: path
+    name: id
+    description: The id of the actor to be delete
+    required: true
+    schema:
+      type: integer
+      minimum: 1
+responses:
+  200:
+    description: The deleted actor id
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        deleted:
+          id:
+            type: number
