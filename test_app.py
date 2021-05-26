@@ -195,6 +195,19 @@ class MoviesTestCase(unittest.TestCase):
             assert data.get("movies") is not None
             assert data["movies"].get("title") == movies["title"]
 
+    def test_400_update_with_empty_data(self):
+        if role in [casting_director, executive_producer]:
+            movies = {}
+            res = self.client.patch(
+                "/movies/1",
+                headers=self.headers,
+                data=json.dumps(movies),
+            )
+
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data["success"] == False
+
 
 class ActorsTestCase(unittest.TestCase):
     def setUp(self):
