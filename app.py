@@ -11,12 +11,6 @@ from database.actors import Actors
 from auth import requires_auth, AuthError
 
 
-class ResourceError(Exception):
-    def __init__(self, error, status_code):
-        self.error = error
-        self.status_code = status_code
-
-
 class RequestError(Exception):
     def __init__(self, error, status_code):
         self.error = error
@@ -27,7 +21,7 @@ def paginate(itemsList=[], page=1, size=10):
     startIndex = (page - 1) * size
     endIndex = startIndex + size
     if startIndex >= len(itemsList):
-        raise ResourceError(
+        raise RequestError(
             {
                 "code": "resource_not_found",
                 "description": "The requested page does not contain any record",
@@ -98,6 +92,19 @@ def create_app(database_path=None):
                 "total": len(itemsList),
             }
         )
+
+    @app.route("/movies/<int:id>")
+    @requires_auth("read:movies")
+    @swag_from("api_doc/get_movies_by_id.yml")
+    def get_movies_by_id(payload, id):
+        movie = Movies.query.get(id)
+        ic(movie)
+        if movie is None:
+            raise RequestError(
+                {"code": "not_found", "description": "No such movies found"},
+                404,
+            )
+        return jsonify({"success": True, "movie": movie.format()})
 
     @app.route("/movies/<int:id>", methods=["PATCH"])
     @requires_auth("update:movies")
@@ -296,13 +303,6 @@ def create_app(database_path=None):
 
     @app.errorhandler(AuthError)
     def handle_auth_error(error):
-        return (
-            jsonify({"success": False, "error": error.error}),
-            error.status_code,
-        )
-
-    @app.errorhandler(ResourceError)
-    def handle_resource_error(error):
         return (
             jsonify({"success": False, "error": error.error}),
             error.status_code,
