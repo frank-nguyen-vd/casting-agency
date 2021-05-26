@@ -174,7 +174,7 @@ class MoviesTestCase(unittest.TestCase):
 
     def test_404_get_not_existing_resource(self):
         if role in [casting_assistant, casting_director, executive_producer]:
-            id = 1
+            id = 10000000
             res = self.client.get(f"/movies/{id}", headers=self.headers)
 
             data = json.loads(res.data)
