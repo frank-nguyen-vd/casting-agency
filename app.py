@@ -149,6 +149,24 @@ def create_app(database_path=None):
 
         return jsonify({"success": True, "movies": movies.format()})
 
+    @app.route("/movies/<int:id>", methods=["DELETE"])
+    @requires_auth("delete:movies")
+    @swag_from("api_doc/delete_movies.yml")
+    def delete_movies(payload, id):
+        movies = Movies.query.get(id)
+        if movies is None:
+            raise RequestError(
+                {"code": "not_found", "description": "Movies not found"},
+                404,
+            )
+
+        try:
+            movies.delete()
+        except:
+            abort(500)
+
+        return jsonify({"success": True, "deleted": id})
+
     @app.route("/actors")
     @requires_auth("read:actors")
     @swag_from("api_doc/get_actors.yml")
