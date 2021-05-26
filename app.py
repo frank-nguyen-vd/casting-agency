@@ -99,6 +99,56 @@ def create_app(database_path=None):
             }
         )
 
+    @app.route("/movies/<int:id>", methods=["PATCH"])
+    @requires_auth("update:movies")
+    @swag_from("api_doc/update_movies.yml")
+    def update_movies(payload, id):
+        reqBody = request.get_json()
+        if reqBody is None:
+            raise RequestError(
+                {"code": "empty_content", "description": "No movies details provided"},
+                400,
+            )
+
+        title = reqBody.get("title")
+        release_date = reqBody.get("release_date")
+
+        if title is None and release_date is None:
+            raise RequestError(
+                {"code": "empty_content", "description": "No movies details provided"},
+                400,
+            )
+
+        try:
+            movies = Movies.query.get(id)
+        except:
+            raise RequestError(
+                {"code": "not_found", "description": "No such movies found"},
+                404,
+            )
+
+        if title is not None:
+            if type(title) is not str:
+                raise RequestError(
+                    {"code": "invalid_format", "description": "Invalid movies details"},
+                    400,
+                )
+            movies.title = title
+        if release_date is not None:
+            if type(release_date) is not str:
+                raise RequestError(
+                    {"code": "invalid_format", "description": "Invalid movies details"},
+                    400,
+                )
+            movies.release_date = release_date
+
+        try:
+            movies.update()
+        except:
+            abort(500)
+
+        return jsonify({"success": True, "movies": movies.format()})
+
     @app.route("/actors")
     @requires_auth("read:actors")
     @swag_from("api_doc/get_actors.yml")
@@ -175,7 +225,7 @@ def create_app(database_path=None):
             actor = Actors.query.get(id)
         except:
             raise RequestError(
-                {"code": "not_found", "description": "No such an actor found"},
+                {"code": "not_found", "description": "No such actor found"},
                 404,
             )
 
