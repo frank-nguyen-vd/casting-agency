@@ -435,5 +435,15 @@ class ActorsTestCase(unittest.TestCase):
             assert type(data["actor"].get("age")) is int
             assert type(data["actor"].get("gender")) is str
 
+    def test_404_get_not_existing_resource(self):
+        if role in [casting_assistant, casting_director, executive_producer]:
+            id = 10000000
+            res = self.client.get(f"/actors/{id}", headers=self.headers)
+
+            data = json.loads(res.data)
+            assert res.status_code == 404
+            assert data.get("success") == False
+
+
 if __name__ == "__main__":
     unittest.main()
