@@ -208,6 +208,19 @@ class MoviesTestCase(unittest.TestCase):
             assert res.status_code == 400
             assert data["success"] == False
 
+    def test_400_update_with_invalid_format(self):
+        if role in [casting_director, executive_producer]:
+            movies = {"title": 0}
+            res = self.client.patch(
+                "/movies/1",
+                headers=self.headers,
+                data=json.dumps(movies),
+            )
+
+            data = json.loads(res.data)
+            assert res.status_code == 400
+            assert data["success"] == False
+
 
 class ActorsTestCase(unittest.TestCase):
     def setUp(self):
