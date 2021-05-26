@@ -85,7 +85,10 @@ class MoviesTestCase(unittest.TestCase):
 
     def test_200_create_new_resource(self):
         if role in [executive_producer]:
-            movies = {"title": "Alan The Best", "release_date": "12/12/2022"}
+            movies = {
+                "title": "Alan The Best",
+                "release_date": "12 Dec 2022 00:00:00 GMT",
+            }
             res = self.client.post(
                 "/movies",
                 headers=self.headers,
@@ -97,7 +100,7 @@ class MoviesTestCase(unittest.TestCase):
             assert data["success"] == True
             assert data.get("movies") is not None
             assert data["movies"].get("title") == movies["title"]
-            assert data["movies"].get("release_date") == movies["release_date"]
+            assert movies["release_date"] in data["movies"].get("release_date")
 
     def test_400_create_with_empty_data(self):
         if role in [executive_producer]:
