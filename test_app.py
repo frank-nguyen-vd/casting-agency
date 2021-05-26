@@ -172,8 +172,14 @@ class MoviesTestCase(unittest.TestCase):
             assert type(data["movie"].get("title")) is str
             assert type(data["movie"].get("release_date")) is str
 
+    def test_404_get_not_existing_resource(self):
+        if role in [casting_assistant, casting_director, executive_producer]:
+            id = 1
+            res = self.client.get(f"/movies/{id}", headers=self.headers)
 
-            assert res.status_code == 401
+            data = json.loads(res.data)
+            assert res.status_code == 404
+            assert data.get("success") == False
 
     def test_404_request_beyond_valid_page(self):
         if role in [casting_assistant, casting_director, executive_producer]:
