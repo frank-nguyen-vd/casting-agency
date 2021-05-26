@@ -274,6 +274,16 @@ class ActorsTestCase(unittest.TestCase):
             assert data.get("success") == False
             assert data.get("actor") is None
 
+    def test_200_delete_resource(self):
+        if role in [casting_director, executive_producer]:
+            id = 1
+            res = self.client.delete(f"/actors/{id}", headers=self.headers)
+
+            data = json.loads(res.data)
+            assert res.status_code == 200
+            assert data["success"] == True
+            assert data.get("deleted") == id
+
 
 if __name__ == "__main__":
     unittest.main()
