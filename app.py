@@ -49,6 +49,39 @@ def create_app(database_path=None):
     def index():
         return redirect("/apidocs")
 
+    @app.route("/movies", methods=["POST"])
+    @requires_auth("create:movies")
+    @swag_from("api_doc/create_movies.yml")
+    def create_movies(payload):
+        reqBody = request.get_json()
+        if reqBody is None:
+            raise RequestError(
+                {"code": "empty_content", "description": "No movies details provided"},
+                400,
+            )
+
+        title = reqBody.get("title")
+        release_date = reqBody.get("release_date")
+
+        if title is None or release_date is None:
+            raise RequestError(
+                {"code": "missing_field", "description": "Missing movies details"},
+                400,
+            )
+
+        if type(title) is not str or type(release_date) is not str:
+            raise RequestError(
+                {"code": "invalid_format", "description": "Invalid movies details"},
+                400,
+            )
+        try:
+            movies = Movies(title, release_date)
+            movies.insert()
+        except:
+            abort(500)
+
+        return jsonify({"success": True, "movies": movies.format()})
+
     @app.route("/movies")
     @requires_auth("read:movies")
     @swag_from("api_doc/get_movies.yml")
