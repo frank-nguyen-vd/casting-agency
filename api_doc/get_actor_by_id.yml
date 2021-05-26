@@ -17,7 +17,7 @@ responses:
       properties:
         success:
           type: boolean
-        movie:
+        actor:
           allOf:
             - $ref: "#/definitions/Actors"
             - type: object
