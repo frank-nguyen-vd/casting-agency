@@ -83,6 +83,22 @@ class MoviesTestCase(unittest.TestCase):
     def tearDown(self):
         db.drop_all()
 
+    def test_200_create_new_resource(self):
+        if role in [executive_producer]:
+            movies = {"title": "Alan The Best", "release_date": "12/12/2022"}
+            res = self.client.post(
+                "/movies",
+                headers=self.headers,
+                data=json.dumps(movies),
+            )
+
+            data = json.loads(res.data)
+            assert res.status_code == 200
+            assert data["success"] == True
+            assert data.get("movies") is not None
+            assert data["movies"].get("title") == movies["title"]
+            assert data["movies"].get("release_date") == movies["release_date"]
+
     def test_200_get_paginated_resource(self):
         if role in [casting_assistant, casting_director, executive_producer]:
             page = 1
